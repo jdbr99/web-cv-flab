@@ -17,15 +17,19 @@ package main
 
 import (
   "fmt"
+  // Utilizamos el módulo "calculus" para derivar y procesar la string de la función
   clc "github.com/TheDemx27/calculus"
 )
 
 func main() {
+  // Declaración de las variables utilizadas para entrada de usuario
   var (
     usrInput string
     usrX float64
     usrIt uint8
   )
+  
+  // Leemos la entrada del usuario
   fmt.Println("Input single variable function:")
   fmt.Scanln(&usrInput)
 
@@ -35,10 +39,12 @@ func main() {
   fmt.Println("Input amount of iterations:")
   fmt.Scanln(&usrIt)
 
+  // Mostramos al usuario la aproximación encontrada después de las iteraciones especificadas
   fmt.Println("The approximation is:")
   fmt.Println(NewtonRaphson(usrInput, usrX, usrIt))
 }
 
+// La función recibe un string de función, un x inicial y la catidad de veces a iterar. Realiza una aproximación inicial y luego itera la fórmula la cantidad de veces especificada
 func NewtonRaphson(funcStr string, x0 float64, iterations uint8) float64 {
   f := clc.NewFunc(funcStr)
   approximation := (x0 - (f.Eval(x0) / f.Diff(x0)))
