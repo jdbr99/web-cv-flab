@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="José Santiago Vales Mena" />
+  <meta name="dcterms.date" content="2019-12-07" />
+  <title>Segment-Tree tutorial</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Segment-Tree tutorial</h1>
+<p class="author">José Santiago Vales Mena</p>
+<p class="date">December 7, 2019</p>
+</header>
+<h1 id="segment-tree">Segment Tree</h1>
+<h2 id="problem">Problem</h2>
+<p>You are given an array of <span class="math inline"><em>n</em></span> elements. Then you are given <span class="math inline"><em>q</em></span> operations, the operations are:</p>
+<ol type="1">
+<li>Give the sum of the elements in the array from <span class="math inline"><em>l</em></span> to <span class="math inline"><em>r</em></span> for a given <span class="math inline"><em>r</em>, <em>l</em> ∈ [0, <em>n</em>]</span> and <span class="math inline"><em>l</em> ≤ <em>r</em></span></li>
+<li>Change the element in the position <span class="math inline"><em>p</em><em>o</em><em>s</em></span> to a value <span class="math inline"><em>k</em></span>.</li>
+</ol>
+<p>*Consider the first position of the array <span class="math inline">0</span>.</p>
+<h3 id="example">Example</h3>
+<p>Consider the array:</p>
+<table>
+<thead>
+<tr class="header">
+<th>10</th>
+<th>5</th>
+<th>9</th>
+<th>7</th>
+<th>2</th>
+<th>34</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table>
+<p>Then you are given <span class="math inline">3</span> operations:</p>
+<ol type="1">
+<li><p><span class="math inline">(1, 2, 5)</span></p>
+<p>Since the first numer is a <span class="math inline">1</span> we must give the sum from position <span class="math inline">2</span> until <span class="math inline">5</span>. Which is <span class="math inline">9 + 7 + 2 + 34 = 52</span></p></li>
+<li><p><span class="math inline">(2, 3, 10)</span></p>
+<p>Since the first number is a <span class="math inline">2</span> the operation is to change the number in position <span class="math inline">3</span> in to a <span class="math inline">10</span>. So the array now looks like:</p>
+<table>
+<thead>
+<tr class="header">
+<th>10</th>
+<th>5</th>
+<th>9</th>
+<th>10</th>
+<th>2</th>
+<th>34</th>
+</tr>
+</thead>
+<tbody>
+</tbody>
+</table></li>
+<li><p><span class="math inline">(1, 1, 4)</span></p>
+<p>We must give the sum from position <span class="math inline">1</span> to <span class="math inline">4</span> which is <span class="math inline">5 + 9 + 10 + 2 = 26</span></p></li>
+</ol>
+<h2 id="the-algorithm">The algorithm</h2>
+<p>For solving this problem it exist a data structure called “Segmente tree”. The idea of the segment tree is a binary tree in which the root of the tree have the solution of the problem for all the range (in this case the sum of all the array). Then there children have the solution of the problem for a subrange, were the range of the two children are disjoined and the union of their range is the total range.</p>
+<p>In order to do a segment tree the problem should be able to construct by the solution of the problem in <span class="math inline">2</span> subranges. For example, in the sum is we want to know the sum of a range we can go recurive and get the sum of a subrange, and then the sum for the other and we sum both results to have want we want</p>
+<figure>
+<img src="RecursiveConstruction.png" alt="Recursive Construction" /><figcaption>Recursive Construction</figcaption>
+</figure>
+<p>And in general for every node that’s not a leaf it must have that the two children are a solution for a subrange of the node so that the two range are disjoined but the union of the two give the total, range. And the leaf are the nodes with range <span class="math inline">[<em>a</em>, <em>a</em>]</span> for <span class="math inline"><em>a</em> ∈ [0, <em>n</em> − 1]</span></p>
+<p>Every node that is not a leaf has a range <span class="math inline">[<em>a</em>, <em>b</em>]</span> with <span class="math inline"><em>a</em> &lt; <em>b</em></span> for convetion we take the range of the left child as <span class="math inline">[<em>a</em>, <em>c</em>]</span> for some <span class="math inline"><em>c</em> ∈ [<em>a</em>, <em>b</em>)</span> and the right child should have the range <span class="math inline">(<em>c</em>, <em>b</em>]</span>. We notice that if we take <span class="math inline"><em>c</em></span> to much to the right the tree will grown very large on the right size and the same for the left size. So the optimal solution is to take <span class="math inline"><em>c</em></span> in the middle of the range, i.e <span class="math inline">$c = \frac{a+b}{2}$</span> and then the left child is <span class="math inline">$[a, \frac{a+b}{2}]$</span> and the right one is <span class="math inline">$[\frac{a+b}{2}+1, b]$</span>. So for an array of <span class="math inline">8</span> elements, the tree looks like:</p>
+<figure>
+<img src="RangesST8.png" alt="SegmentsOfST8" /><figcaption>SegmentsOfST8</figcaption>
+</figure>
+<p>¿How do we construct this tree if we want to make it for sums? Like we said this is just recursive, just let the leaf take the value of the position in the array (the leaf with range <span class="math inline">[<em>i</em>, <em>i</em>]</span> will have the value <span class="math inline"><em>a</em><em>r</em><em>r</em><em>a</em><em>y</em>[<em>i</em>]</span>). Let’s make the struct for the node of the segment tree.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">struct</span> nodo{</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">    <span class="dt">int</span> val; <span class="co">//The value of the node</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">    <span class="dt">int</span> a, b; <span class="co">//The range</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">    nodo *l, *r; <span class="co">//Pointer to their child</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">} *head; <span class="co">//Head is the pointer to the root</span></a></code></pre></div>
+<p>And the function to construct it we need to construct the root, but because it’s recursive by contructing the root we can construct all the segment tree.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="dt">int</span> construct(nodo *node, <span class="dt">int</span> *ar){ <span class="co">//Tipe int because it will be returning values of the nodes to construct the other nodes, and ar is the array were the values are store.</span></a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">    <span class="cf">if</span> (node -&gt; a == node -&gt; b){ <span class="co">//It&#39;s a leaf</span></a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">        node -&gt; val = ar[node -&gt; a];</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">        <span class="cf">return</span> node -&gt; val;</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5">    } <span class="co">//Then its not a leaf so:</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6">    <span class="co">//Create left child</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7">    node -&gt; l = <span class="kw">new</span> nodo;</a>
+<a class="sourceLine" id="cb2-8" data-line-number="8">    (node-&gt; l) -&gt; a = node -&gt; a;</a>
+<a class="sourceLine" id="cb2-9" data-line-number="9">    (node -&gt; l) -&gt; b = (node -&gt; a + node -&gt; b) /<span class="dv">2</span>;</a>
+<a class="sourceLine" id="cb2-10" data-line-number="10">    <span class="co">//Create left child</span></a>
+<a class="sourceLine" id="cb2-11" data-line-number="11">    node -&gt; r = <span class="kw">new</span> nodo;</a>
+<a class="sourceLine" id="cb2-12" data-line-number="12">    (node-&gt; r) -&gt; a = (node -&gt; a + node -&gt; b) / <span class="dv">2</span> + <span class="dv">1</span>;</a>
+<a class="sourceLine" id="cb2-13" data-line-number="13">    (node -&gt; r) -&gt; b =  node -&gt; b;</a>
+<a class="sourceLine" id="cb2-14" data-line-number="14">    <span class="co">//Get the value with recursion</span></a>
+<a class="sourceLine" id="cb2-15" data-line-number="15">    node -&gt; val = construct(node -&gt; l, ar) + (node -&gt; r, ar); </a>
+<a class="sourceLine" id="cb2-16" data-line-number="16">    <span class="cf">return</span> node -&gt; val;</a>
+<a class="sourceLine" id="cb2-17" data-line-number="17">}</a>
+<a class="sourceLine" id="cb2-18" data-line-number="18">...</a>
+<a class="sourceLine" id="cb2-19" data-line-number="19"><span class="co">//Initialize the range of the root</span></a>
+<a class="sourceLine" id="cb2-20" data-line-number="20">head -&gt; a = <span class="dv">0</span>;</a>
+<a class="sourceLine" id="cb2-21" data-line-number="21">head -&gt; b = n; </a>
+<a class="sourceLine" id="cb2-22" data-line-number="22"><span class="co">//Construct the ST</span></a>
+<a class="sourceLine" id="cb2-23" data-line-number="23">construct(head, ar);</a></code></pre></div>
+<p>This code is a bit large and can be confusing for some people. And we are using memory that we can save, if we see we don’t really need to store in each node the range, we can just seat it as a parameter on the funtion. And we can create a macro that gives us the middle between <span class="math inline"><em>a</em></span> and <span class="math inline"><em>b</em></span> just for a cleaner code. So we can do:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="pp">#define mid (a, b) ((a+b)/2)</span></a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">...</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"><span class="kw">struct</span> nodo{</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">    <span class="dt">int</span> val;<span class="co">//The value of the node</span></a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">    nodo *l, *r; <span class="co">//Pointer to their children</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">} *head; <span class="co">//Head is the pointer to the root</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="dt">int</span> build(<span class="dt">int</span> l, <span class="dt">int</span> r, nodo* node, <span class="dt">int</span>* ar){ <span class="co">/*Tipe int because it will be returning values of the nodes to construct the other nodes, and ar is the array were the values are store. l and r are the range of the current node*/</span></a>
+<a class="sourceLine" id="cb3-9" data-line-number="9">    <span class="cf">if</span> (l == r) node -&gt; val = ar[l]; <span class="co">//If it&#39;s a leaf</span></a>
+<a class="sourceLine" id="cb3-10" data-line-number="10">    <span class="cf">else</span>{</a>
+<a class="sourceLine" id="cb3-11" data-line-number="11">        node -&gt; l = <span class="kw">new</span> nodo; <span class="co">//Create left child</span></a>
+<a class="sourceLine" id="cb3-12" data-line-number="12">        node -&gt; r = <span class="kw">new</span> nodo; <span class="co">//Create right child</span></a>
+<a class="sourceLine" id="cb3-13" data-line-number="13">        node -&gt; val = build(l, mit(l, r), node -&gt; l, ar) + build(mit(l, r) + <span class="dv">1</span>, r, node -&gt; r, ar); <span class="co">//Get the value with recursion </span></a>
+<a class="sourceLine" id="cb3-14" data-line-number="14">    }</a>
+<a class="sourceLine" id="cb3-15" data-line-number="15">    <span class="cf">return</span> node -&gt; val; <span class="co">//Return the value of node, so the other nodes can use it to construct  </span></a>
+<a class="sourceLine" id="cb3-16" data-line-number="16">}</a></code></pre></div>
+<p>¿To much memory?¿To slow? Lets first answer the memory cuestion. We know that there are <span class="math inline"><em>n</em></span> leafs because each leaf can only be an element of the original array. So the lowest level of the tree have at must <span class="math inline"><em>n</em></span> nodes, because this a binary tree we know that the level before that have at must <span class="math inline"><em>n</em>/2</span> nodes, because for each pair of node they have one father, and so on. So for each level there are al must <span class="math inline"><em>n</em>/2<sup><em>i</em></sup></span> nodes were <span class="math inline"><em>i</em></span> is the number of levels from the lowest to the actual. We know that in the first level there is only one node. So in the first level <span class="math inline"><em>i</em> = log<sub>2</sub><em>n</em></span> because:</p>
+<p><br /><span class="math display">$$ \frac{n}{2^{\log_2(n)}} = \frac{n}{n} = 1 $$</span><br /></p>
+<p>So the distance between the lowest node and the root (the height of the tree) is <span class="math inline">log<sub>2</sub><em>n</em> + 1</span> the plus one is because with <span class="math inline"><em>i</em></span> with count the last level as <span class="math inline">0</span>.</p>
+<figure>
+<img src="HeightOfST.png" alt="HeightOfTheST" /><figcaption>HeightOfTheST</figcaption>
+</figure>
+<p>And since it’s a binary tree the maximun numer of node that it could have are:<span class="math inline">2<sup><em>k</em></sup></span> were <span class="math inline"><em>k</em></span> is the height. Then the segment three have al must:</p>
+<p><br /><span class="math display">2<sup>log<sub>2</sub><em>n</em> + 1</sup> = 2 * <em>n</em></span><br /></p>
+<p>So the memory it’s just 2 times the size of the original array. And the creation only pases one time over each node so construction takes <span class="math inline"><em>O</em>(<em>N</em>)</span>.</p>
+<p>Now for answer a question type 1 we must see that each node hace 3 possible states for the question:</p>
+<ol type="1">
+<li>The range of the node is completly out of the range of the question.</li>
+<li>The range of the node is completly inside of the range of the question.</li>
+<li>The range of the node have some elements that are part of the question.</li>
+</ol>
+<p>Then we can go from the top of the tree, and ask if 1 happens then we return 0 because all that segment is useless for the question. If 2 happens we can just return the value of the node (there is no case to go under that node because that node contains the answer of all the subtree). If 3 happens we can just ask the same question for the children to “see” whats useful information they have and we just add it up. So the query function is like</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="dt">int</span> query(<span class="dt">int</span> lq, <span class="dt">int</span> rq, <span class="dt">int</span> l, <span class="dt">int</span> r, nodo* node){ <span class="co">//lq and rq are the range of the question</span></a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">    <span class="cf">if</span> (r &lt; lq || rq &lt; l) <span class="cf">return</span> <span class="dv">0</span>; <span class="co">//Completly outof range</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">    <span class="cf">if</span> (lq &lt;= l &amp;&amp; r &lt;= rq) <span class="cf">return</span> node -&gt; val; <span class="co">//Completly in range</span></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">    <span class="cf">return</span> query(lq, rq, l, mit(l, r), node -&gt; l) + query( lq, rq, mit(l, r) + <span class="dv">1</span>, r, node -&gt; r); <span class="co">//With some useful elements</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">}</a></code></pre></div>
+<p>And to see the complexity we need to notice that for each level of the tree the answer use at most 2 nodes. Supose that it uses 3 nodes <em>a</em>, <em>b</em>, <em>c</em>, we can supose that <span class="math inline"><em>a</em> &lt; <em>b</em> &lt; <em>c</em></span> without lost of genarility. since the query is a contigous range it means that the range from the node <em>a</em> to <em>b</em> it’s and answer and so <em>b</em> and <em>c</em>, and that means that there another node in the level before that it’s an answer, so the function will never go <span class="math inline"><em>b</em></span> because it stop in a level before.</p>
+<figure>
+<img src="ContradictionOfComplexity.png" alt="ContradictionToShowComplexity" /><figcaption>ContradictionToShowComplexity</figcaption>
+</figure>
+<p>And because the tree have <span class="math inline">log<sub>2</sub><em>n</em> + 1</span> height. The complexity becomes <span class="math inline"><em>O</em>(log <em>n</em>)</span>.</p>
+<p>And finally for the position we can just search in the tree the leaf <span class="math inline">[<em>p</em><em>o</em><em>s</em>, <em>p</em><em>o</em><em>s</em>]</span>. And because in the tree all range are disjoin, it only exist one node that contains the node being updated. So we just need to go to 1 node for level that’s <span class="math inline"><em>O</em>(log <em>n</em>)</span>. And we do this recursive in order to update all the nodes that we pass in (the ones that contains <span class="math inline"><em>p</em><em>o</em><em>s</em></span> in the range). And we got:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="dt">int</span> update(<span class="dt">int</span> l, <span class="dt">int</span> r, <span class="dt">int</span> pos, nodo* node, <span class="dt">int</span> k){ <span class="co">//Pos is the position of the update and k the new value of the number in pos</span></a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">    <span class="cf">if</span> (r &lt; pos || pos &lt; l) <span class="cf">return</span> node -&gt; val; <span class="co">//If this node doesn&#39;t contain the update just return the value without change</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">    <span class="cf">if</span> (pos &lt;= l &amp;&amp; r &lt;= pos) node -&gt; val = k; <span class="co">//If we are in the leaf number to be uptade we change the value</span></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4">    <span class="cf">else</span> node -&gt; val = update(l, mit(l, r), pos, node -&gt; l, k) + update(mit(l, r)<span class="dv">+1</span>, r, pos, node -&gt; r, k) ; <span class="co">/*It&#39;s a node thats contains</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co">    the node being updated so it must update its value to whatever their children returns*/</span></a>
+<a class="sourceLine" id="cb5-6" data-line-number="6">    <span class="cf">return</span> node -&gt; val; <span class="co">//return the value for recursive update</span></a>
+<a class="sourceLine" id="cb5-7" data-line-number="7">}</a></code></pre></div>
+<p>And then we just add a function that deletes the dynamic memory we creat when we finish</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode cpp"><code class="sourceCode cpp"><a class="sourceLine" id="cb6-1" data-line-number="1"><span class="dt">void</span> erase(nodo *node){</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">    <span class="cf">if</span> (node -&gt; l == NULL){ <span class="co">//Its a leaf because it hasn&#39;t children</span></a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">        <span class="kw">delete</span> node;</a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">        <span class="cf">return</span>;</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5">    } <span class="co">//If not, is a node with child and we need to erase it children recursive</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6">    erase(node -&gt; l);</a>
+<a class="sourceLine" id="cb6-7" data-line-number="7">    erase(node -&gt; r);</a>
+<a class="sourceLine" id="cb6-8" data-line-number="8">    <span class="co">//We already delete all the node down this one</span></a>
+<a class="sourceLine" id="cb6-9" data-line-number="9">    node -&gt; l = NULL; <span class="co">//Set pointers to children NULL</span></a>
+<a class="sourceLine" id="cb6-10" data-line-number="10">    node -&gt; r = NULL;</a>
+<a class="sourceLine" id="cb6-11" data-line-number="11">    <span class="kw">delete</span> node; <span class="co">//Delete the actual node</span></a>
+<a class="sourceLine" id="cb6-12" data-line-number="12">}</a></code></pre></div>
+<p>So the segment tree solves the problem in <span class="math inline"><em>O</em>(<em>K</em>log <em>N</em>)</span></p>
+</body>
+</html>
