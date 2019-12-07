@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <meta name="author" content="David Bolaños" />
+  <meta name="dcterms.date" content="2019-12-07" />
+  <title>Método de Newton-Raphson</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(data-line-number);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">Método de Newton-Raphson</h1>
+<p class="author">David Bolaños</p>
+<p class="date">December 7, 2019</p>
+</header>
+<p>El método de <strong>Newton-Raphson</strong> es un método de cálculo utilizado para encontrar raíces de una función. Es un algoritmo que iterativamente encuentra mejores aproximaciones.</p>
+<p>Uno de los problemas más grandes que se presentan al implementar este algoritmo es el problema de <em>desbordamiento de variables</em>, debido a que la cantidad de números decimales encontrados es incrementalmente mayor.</p>
+<h2 id="explicación">Explicación</h2>
+<p>El algoritmo requiere una función derivable en un punto <span class="math inline"><em>x</em><sub>0</sub></span> y un punto <span class="math inline"><em>x</em><sub>0</sub></span> inicial para calcular una aproximación inicial.</p>
+<p>Este algoritmo ejecuta iterativamente la función [ x_n+1 =  ] y retorna la aproximación después de las iteraciones especificadas.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode go"><code class="sourceCode go"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">package</span> main</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3"><span class="kw">import</span> (</a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">  <span class="st">&quot;fmt&quot;</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">  <span class="co">// Utilizamos el módulo &quot;calculus&quot; para derivar y procesar la string de la función</span></a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">  clc <span class="st">&quot;github.com/TheDemx27/calculus&quot;</span></a>
+<a class="sourceLine" id="cb1-7" data-line-number="7">)</a>
+<a class="sourceLine" id="cb1-8" data-line-number="8"></a>
+<a class="sourceLine" id="cb1-9" data-line-number="9"><span class="kw">func</span> main() {</a>
+<a class="sourceLine" id="cb1-10" data-line-number="10">  <span class="co">// Declaración de las variables utilizadas para entrada de usuario</span></a>
+<a class="sourceLine" id="cb1-11" data-line-number="11">  <span class="kw">var</span> (</a>
+<a class="sourceLine" id="cb1-12" data-line-number="12">    usrInput <span class="dt">string</span></a>
+<a class="sourceLine" id="cb1-13" data-line-number="13">    usrX <span class="dt">float64</span></a>
+<a class="sourceLine" id="cb1-14" data-line-number="14">    usrIt <span class="dt">uint8</span></a>
+<a class="sourceLine" id="cb1-15" data-line-number="15">  )</a>
+<a class="sourceLine" id="cb1-16" data-line-number="16">  </a>
+<a class="sourceLine" id="cb1-17" data-line-number="17">  <span class="co">// Leemos la entrada del usuario</span></a>
+<a class="sourceLine" id="cb1-18" data-line-number="18">  fmt.Println(<span class="st">&quot;Input single variable function:&quot;</span>)</a>
+<a class="sourceLine" id="cb1-19" data-line-number="19">  fmt.Scanln(&amp;usrInput)</a>
+<a class="sourceLine" id="cb1-20" data-line-number="20"></a>
+<a class="sourceLine" id="cb1-21" data-line-number="21">  fmt.Println(<span class="st">&quot;Input initial x value:&quot;</span>)</a>
+<a class="sourceLine" id="cb1-22" data-line-number="22">  fmt.Scanln(&amp;usrX)</a>
+<a class="sourceLine" id="cb1-23" data-line-number="23"></a>
+<a class="sourceLine" id="cb1-24" data-line-number="24">  fmt.Println(<span class="st">&quot;Input amount of iterations:&quot;</span>)</a>
+<a class="sourceLine" id="cb1-25" data-line-number="25">  fmt.Scanln(&amp;usrIt)</a>
+<a class="sourceLine" id="cb1-26" data-line-number="26"></a>
+<a class="sourceLine" id="cb1-27" data-line-number="27">  <span class="co">// Mostramos al usuario la aproximación encontrada después de las iteraciones especificadas</span></a>
+<a class="sourceLine" id="cb1-28" data-line-number="28">  fmt.Println(<span class="st">&quot;The approximation is:&quot;</span>)</a>
+<a class="sourceLine" id="cb1-29" data-line-number="29">  fmt.Println(NewtonRaphson(usrInput, usrX, usrIt))</a>
+<a class="sourceLine" id="cb1-30" data-line-number="30">}</a>
+<a class="sourceLine" id="cb1-31" data-line-number="31"></a>
+<a class="sourceLine" id="cb1-32" data-line-number="32"><span class="co">// La función recibe un string de función, un x inicial y la catidad de veces a iterar. Realiza una aproximación inicial y luego itera la fórmula la cantidad de veces especificada</span></a>
+<a class="sourceLine" id="cb1-33" data-line-number="33"><span class="kw">func</span> NewtonRaphson(funcStr <span class="dt">string</span>, x0 <span class="dt">float64</span>, iterations <span class="dt">uint8</span>) <span class="dt">float64</span> {</a>
+<a class="sourceLine" id="cb1-34" data-line-number="34">  f := clc.NewFunc(funcStr)</a>
+<a class="sourceLine" id="cb1-35" data-line-number="35">  approximation := (x0 - (f.Eval(x0) / f.Diff(x0)))</a>
+<a class="sourceLine" id="cb1-36" data-line-number="36">  <span class="kw">for</span> i := <span class="dv">0</span>; i &lt; <span class="dt">int</span>(iterations); i++ {</a>
+<a class="sourceLine" id="cb1-37" data-line-number="37">    approximation -= f.Eval(approximation)/f.Diff(approximation)</a>
+<a class="sourceLine" id="cb1-38" data-line-number="38">  }</a>
+<a class="sourceLine" id="cb1-39" data-line-number="39">  <span class="kw">return</span> approximation</a>
+<a class="sourceLine" id="cb1-40" data-line-number="40">}</a></code></pre></div>
+</body>
+</html>
