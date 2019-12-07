@@ -15,6 +15,4 @@ void extendedGcd( ELEM, ELEM, ELEM&, ELEM& );
 ELEM binpow( ELEM, ELEM );
 ELEM binpowMod( ELEM, ELEM, ELEM );
 
-// Modular Multiplication Inverse
-
 #endif
