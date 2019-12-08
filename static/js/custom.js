@@ -1,7 +1,7 @@
 
 $(document).ready(function() {
 
-  // Smooth scrolling
+  // Scrolling suavizado
   $(function() {
     $('a[href*="#"]:not([href="#"])').click(function() {
       if (location.pathname.replace(/^\//,'') == this.pathname.replace(/^\//,'') && location.hostname == this.hostname) {
@@ -29,13 +29,13 @@ $(document).ready(function() {
     });
   });
 
-  // Initiate superfish on nav menu
+  // Navegador del menu
   $('.nav-menu').superfish({
     animation: {opacity:'show'},
     speed: 400
   });
 
-  // Mobile Navigation
+  // Navegacion mobil
   if( $('#nav-menu-container').length ) {
       var $mobile_nav = $('#nav-menu-container').clone().prop({ id: 'mobile-nav'});
       $mobile_nav.find('> ul').attr({ 'class' : '', 'id' : '' });
@@ -70,11 +70,10 @@ $(document).ready(function() {
       $("#mobile-nav, #mobile-nav-toggle").hide();
   }
 
-  // Stick the header at top on scroll
+  // Dejar el menu-header en la parte superior del scrolling
   $("#header").sticky({topSpacing:0, zIndex: '50'});
 
-  // Counting numbers
-
+  // Conteo de numeros
   $('[data-toggle="counter-up"]').counterUp({
     delay: 10,
     time: 1000
@@ -84,23 +83,23 @@ $(document).ready(function() {
   $('[data-toggle="tooltip"]').tooltip();
   $('[data-toggle="popover"]').popover();
 
-  // Background image via data tag
+  // Imagen de fondo por un data tag
   $('[data-block-bg-img]').each(function() {
-    // @todo - invoke backstretch plugin if multiple images
+    // @todo - llamada al plugin de backstretch en multiples imagenes
     var $this = $(this),
       bgImg = $this.data('block-bg-img');
 
       $this.css('backgroundImage','url('+ bgImg + ')').addClass('block-bg-img');
   });
 
-  // jQuery counterUp
+  // Response jQuery
   if(jQuery().counterUp) {
     $('[data-counter-up]').counterUp({
       delay: 20,
     });
   }
 
-  //Scroll Top link
+  // Scroll top link
   $(window).scroll(function(){
     if ($(this).scrollTop() > 100) {
       $('.scrolltop').fadeIn();

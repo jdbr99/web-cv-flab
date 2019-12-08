@@ -7,7 +7,4 @@ CV web creado con Flask y Bootstrap por el equipo #team-on-fire como proyecto pa
 - [ ] Adaptar el texto de la plantilla  
 - [ ] Incluir links a otras páginas individuales de CV  
 - [ ] Corregir la información de los miembros  
-- [ ] Insertar imágenes propias
-
-puto el que lo lea
-y ferro mas xddxd
+- [ ] Insertar imágenes propias  
