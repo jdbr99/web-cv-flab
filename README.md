@@ -3,8 +3,8 @@ CV web creado con Flask y Bootstrap por el equipo #team-on-fire como proyecto pa
 
 # TODO
 - [x] Crear boilerplate de Flask (David)  
-- [ ] Diseñar un logo para el equipo  
+- [x] Diseñar un logo para el equipo  
 - [ ] Adaptar el texto de la plantilla  
-- [ ] Incluir links a otras páginas individuales de CV  
-- [ ] Corregir la información de los miembros  
-- [ ] Insertar imágenes propias  
+- [x] Incluir links a otras páginas individuales de CV  
+- [x] Corregir la información de los miembros  
+- [x] Insertar imágenes propias  
